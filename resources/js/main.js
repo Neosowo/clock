@@ -46,7 +46,6 @@ function updateButtonColor() {
     const rgb = bgColor.match(/\d+/g);
     const brightness = (parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000;
     formatToggle.style.color = brightness > 128 ? '#000000' : '#ffffff';
-    formatToggle.style.background = brightness > 128 ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)';
 }
 
 // Agregar al evento de cambio de color de fondo
