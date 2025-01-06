@@ -6,7 +6,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #1a1a1a;
+            background-color: #13131b;
             font-family: "Josefin Sans", serif;
             font-optical-sizing: auto;
             padding: 20px;
@@ -14,7 +14,7 @@
         
         #clock {
             font-size: clamp(5rem, 20vw, 15rem);
-            color: #e74c3c;
+            color:   #4abf5e ;
             font-weight: bold;
             margin-bottom: 2rem;
             text-align: center;

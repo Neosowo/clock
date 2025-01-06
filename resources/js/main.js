@@ -64,8 +64,8 @@ setInterval(updateClock, 1000);
 
 // Función para cargar los colores guardados
 function loadSavedColors() {
-    const savedClockColor = localStorage.getItem('clockColor') || '#e74c3c';
-    const savedBgColor = localStorage.getItem('bgColor') || '#1a1a1a';
+    const savedClockColor = localStorage.getItem('clockColor') || ' #fcca52 ';
+    const savedBgColor = localStorage.getItem('bgColor') || '#13131b';
 
     // Aplicar colores guardados
     document.getElementById('clock').style.color = savedClockColor;
