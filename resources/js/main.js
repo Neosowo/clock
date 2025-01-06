@@ -121,3 +121,50 @@ document.getElementById('bgColor').addEventListener('input', (e) => {
 
 // Actualizar color del ícono al cargar
 window.addEventListener('load', updateIconColor);
+
+// Sistema de auto-ocultamiento
+let inactivityTimer;
+let isHidden = false;
+
+function hideControls() {
+    if (!isHidden) {
+        isHidden = true;
+        formatToggle.style.opacity = '0.1';
+        settingsIcon.style.opacity = '0.1';
+        if (controls.style.display === 'flex') {
+            controls.style.opacity = '0.1';
+        }
+    }
+}
+
+function showControls() {
+    if (isHidden) {
+        isHidden = false;
+        formatToggle.style.opacity = '1';
+        settingsIcon.style.opacity = '1';
+        if (controls.style.display === 'flex') {
+            controls.style.opacity = '1';
+        }
+    }
+}
+
+function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    showControls();
+    inactivityTimer = setTimeout(hideControls, 5000); // 5 segundos
+}
+
+// Eventos para detectar actividad
+document.addEventListener('mousemove', resetInactivityTimer);
+document.addEventListener('mousedown', resetInactivityTimer);
+document.addEventListener('keypress', resetInactivityTimer);
+document.addEventListener('touchstart', resetInactivityTimer);
+document.addEventListener('touchmove', resetInactivityTimer);
+
+// Iniciar el timer
+resetInactivityTimer();
+
+// Añadir transiciones suaves en CSS
+formatToggle.style.transition = 'opacity 0.3s ease';
+settingsIcon.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+controls.style.transition = 'opacity 0.3s ease';
