@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a1a1a;
+            font-family: "Josefin Sans", serif;
+            font-optical-sizing: auto;
+            padding: 20px;
+        }
+        
+        #clock {
+            font-size: clamp(5rem, 20vw, 15rem);
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            text-align: center;
+            width: 100%;
+            line-height: 1;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 60px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 12px 16px;
+            border-radius: 20px;
+            display: none;
+            gap: 1rem;
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        label {
+            color: white;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+        }
+
+        .settings-icon {
+            position: fixed;
+            bottom: clamp(10px, 2vw, 20px);
+            left: clamp(10px, 2vw, 20px);
+            width: 27px;
+            height: 27px;
+            padding: 8px;
+            margin-bottom: -9px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+           
+        }
+
+        .settings-icon.active {
+            transform: rotate(180deg);
+        }
+
+        .settings-icon path {
+            transition: fill 0.3s ease;
+        }
+
+        .format-toggle {
+            position: fixed;
+            bottom: clamp(10px, 2vw, 20px);
+            right: clamp(10px, 2vw, 20px);
+            height: 35px;
+            padding: 0 16px;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            font-family: "Josefin Sans", serif;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .format-toggle:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .format-toggle:active {
+            transform: translateY(1px);
+        }
+
+        .period {
+            font-size: 40%;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            #clock {
+                font-size: clamp(6rem, 25vw, 20rem);
+                margin-bottom: 3rem;
+            }
+
+            .controls {
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 70px;
+                padding: 12px;
+                width: auto;
+                flex-direction: column;
+            }
+
+            .control-group {
+                flex-direction: row;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .settings-icon {
+                left: 20px;
+                bottom: 20px;
+                width: 45px;
+                height: 45px;
+                padding: 10px;
+            }
+
+            .format-toggle {
+                right: 20px;
+                bottom: 20px;
+                height: 45px;
+                padding: 0 20px;
+                font-size: 16px;
+            }
+
+            .period {
+                font-size: 35%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #clock {
+                font-size: clamp(5rem, 30vw, 15rem);
+                margin-bottom: 2rem;
+            }
+
+            .controls {
+                width: 85vw;
+                bottom: 80px;
+            }
+
+            .control-group {
+                gap: 0.5rem;
+            }
+
+            label {
+                font-size: 14px;
+            }
+
+            .format-toggle {
+                width: auto;
+                right: 20px;
+                bottom: 25px;
+            }
+        }
+
+        @media (max-height: 400px) {
+            #clock {
+                font-size: clamp(4rem, 15vw, 10rem);
+            }
+        }
