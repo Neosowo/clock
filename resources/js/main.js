@@ -1,17 +1,44 @@
 // Función principal del temporizador
 function updateCountdown() {
     const now = new Date();
-    const targetTime = new Date();
-    targetTime.setHours(11, 0, 0, 0); // 11:00 AM
+    // Initial target time (default to 11:00 AM if no parallel is set)
+    let targetHour = 11;
+    let targetMinute = 0;
 
-    // Si ya pasó la hora objetivo, mostrar 00:00:00
-    if (now > targetTime) {
-        document.getElementById('clock').textContent = '00:00:00';
-        return;
+    const savedParallel = localStorage.getItem('selectedParallel');
+    if (savedParallel) {
+        const schedule = {
+            'A': { targetHour: 10, targetMinute: 0 }, // Assuming 10:00 for FRNJA 1 for A
+            'B': { targetHour: 12, targetMinute: 30 }, // Assuming 12:30 for FRNJA 2 for B
+            'C': { targetHour: 10, targetMinute: 0 }, // Assuming 10:00 for FRNJA 1 for C
+            'D': { targetHour: 12, targetMinute: 30 }, // Assuming 12:30 for FRNJA 2 for D
+            // Add more parallels as needed based on the image provided
+        };
+
+        const parallelData = schedule[savedParallel.toUpperCase()];
+        if (parallelData) {
+            targetHour = parallelData.targetHour;
+            targetMinute = parallelData.targetMinute;
+        }
+    }
+
+    const targetTime = new Date();
+    targetTime.setHours(targetHour, targetMinute, 0, 0); 
+
+    // If target time has passed for today, set it for tomorrow
+    if (now.getTime() > targetTime.getTime()) {
+        targetTime.setDate(targetTime.getDate() + 1);
     }
 
     const diff = targetTime - now;
     
+    // If countdown finishes, display 00:00:00 and clear interval
+    if (diff <= 0) {
+        document.getElementById('clock').textContent = '00:00:00';
+        clearInterval(window.countdownInterval);
+        return;
+    }
+
     // Calcular horas, minutos y segundos
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -27,9 +54,9 @@ function updateCountdown() {
         `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
 
-// Actualizar cada segundo
-setInterval(updateCountdown, 1000);
-updateCountdown(); // Actualizar inmediatamente al cargar
+// Update every second
+window.countdownInterval = setInterval(updateCountdown, 1000);
+updateCountdown(); // Update immediately on load
 
 // Controles de color
 const clockColor = document.getElementById('clockColor');
@@ -176,48 +203,75 @@ controls.style.transition = 'opacity 0.3s ease';
 */
 
 document.addEventListener('DOMContentLoaded', () => {
-    const clockElement = document.getElementById('clock');
-    const countdownTextElement = document.querySelector('.countdown-text');
+    const configButton = document.getElementById('configButton');
+    const configModal = document.getElementById('configModal');
+    const closeButton = document.querySelector('.close-button');
+    const parallelInput = document.getElementById('parallelInput');
+    const saveParallelBtn = document.getElementById('saveParallelBtn');
+    const infoMessage = document.getElementById('infoMessage');
+    const errorMessage = document.getElementById('errorMessage');
 
-    let countdownInterval;
-
-    function startCountdown() {
-        const now = new Date();
-        const targetDate = new Date();
-        targetDate.setHours(11, 0, 0, 0); // Set target to 11:00 AM
-
-        // If the target time has already passed today, set it for tomorrow
-        if (targetDate.getTime() < now.getTime()) {
-            targetDate.setDate(targetDate.getDate() + 1);
-        }
-
-        clearInterval(countdownInterval);
-        countdownInterval = setInterval(() => {
-            const currentTime = new Date().getTime();
-            const timeLeft = targetDate.getTime() - currentTime;
-
-            if (timeLeft <= 0) {
-                clearInterval(countdownInterval);
-                clockElement.textContent = '00:00:00';
-                countdownTextElement.textContent = '¡Tiempo terminado!';
-                return;
-            }
-
-            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-            // Format for display (add days if > 0)
-            let timeString = '';
-            if (days > 0) {
-                timeString += `${days.toString().padStart(2, '0')}:`;
-            }
-            timeString += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-            clockElement.textContent = timeString;
-        }, 1000);
+    // Function to show modal
+    function showModal() {
+        configModal.style.display = 'flex';
+        setTimeout(() => configModal.classList.add('show'), 10);
     }
 
-    startCountdown(); // Start the countdown immediately on page load
+    // Function to hide modal
+    function hideModal() {
+        configModal.classList.remove('show');
+        setTimeout(() => configModal.style.display = 'none', 300);
+        errorMessage.style.display = 'none';
+        infoMessage.style.display = 'none';
+    }
+
+    // Event listeners for modal
+    if (configButton) {
+        configButton.addEventListener('click', showModal);
+    }
+    if (closeButton) {
+        closeButton.addEventListener('click', hideModal);
+    }
+
+    // Handle saving parallel
+    if (saveParallelBtn) {
+        saveParallelBtn.addEventListener('click', () => {
+            const parallel = parallelInput.value.trim().toUpperCase();
+            const schedule = {
+                'A': { targetHour: 10, targetMinute: 0 }, 
+                'B': { targetHour: 12, targetMinute: 30 }, 
+                'C': { targetHour: 10, targetMinute: 0 }, 
+                'D': { targetHour: 12, targetMinute: 30 }, 
+            };
+
+            if (schedule[parallel]) {
+                localStorage.setItem('selectedParallel', parallel);
+                infoMessage.textContent = `Horario configurado para el paralelo ${parallel}.`;
+                infoMessage.style.display = 'block';
+                errorMessage.style.display = 'none';
+                updateCountdown(); // Update countdown with new parallel
+                setTimeout(hideModal, 1500); // Hide modal after a short delay
+            } else {
+                errorMessage.textContent = 'Paralelo no encontrado. Inténtalo de nuevo.';
+                errorMessage.style.display = 'block';
+                infoMessage.style.display = 'none';
+            }
+        });
+    }
+
+    // Load saved parallel on page load and update countdown text
+    const savedParallel = localStorage.getItem('selectedParallel');
+    if (savedParallel) {
+        const schedule = {
+            'A': { targetHour: 10, targetMinute: 0 }, 
+            'B': { targetHour: 12, targetMinute: 30 }, 
+            'C': { targetHour: 10, targetMinute: 0 }, 
+            'D': { targetHour: 12, targetMinute: 30 }, 
+        };
+        const parallelData = schedule[savedParallel.toUpperCase()];
+        if (parallelData) {
+            document.querySelector('.countdown-text').textContent = `la lg me detona en: ${savedParallel.toUpperCase()}`; 
+        }
+    }
+    updateCountdown();
 });
