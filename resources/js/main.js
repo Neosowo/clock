@@ -176,145 +176,48 @@ controls.style.transition = 'opacity 0.3s ease';
 */
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Script main.js cargado y DOMContentLoaded disparado.');
     const clockElement = document.getElementById('clock');
     const countdownTextElement = document.querySelector('.countdown-text');
-    const paraleloInput = document.getElementById('paraleloInput');
-    const startButton = document.getElementById('startButton');
-    const infoTextElement = document.getElementById('infoText');
-    const errorMessageElement = document.getElementById('errorMessage');
-    const paraleloModal = document.getElementById('paraleloModal');
-
-    console.log('Elemento paraleloModal:', paraleloModal);
 
     let countdownInterval;
 
-    const franjasData = [
-        // FRANCIA 1: 8h30-10h00
-        { aula: 'A001', paralelo: 'ING35', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A002', paralelo: 'ING1', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A003', paralelo: 'ING2', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A004', paralelo: 'ING3', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A005', paralelo: 'ING4', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A006', paralelo: 'ING5', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A102', paralelo: 'ING6', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A103', paralelo: 'ING7', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A104', paralelo: 'ING8', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A105', paralelo: 'ING9', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A106', paralelo: 'ING38', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A107', paralelo: 'ING11', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A108', paralelo: 'ING12', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A110', paralelo: 'ING13', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A112', paralelo: 'ING22', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A201', paralelo: 'ING16', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A202', paralelo: 'ING17', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A203', paralelo: 'ING18', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A204', paralelo: 'ING19', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A205', paralelo: 'ING10', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A206', paralelo: 'ING20', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A207', paralelo: 'ING21', franja: 'FRANJA 1', time_end: '10:00' },
-        { aula: 'A208', paralelo: 'ING14', franja: 'FRANJA 1', time_end: '10:00' },
-        // FRANCIA 2: 11h00-12h30
-        { aula: 'A001', paralelo: 'ING36', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A002', paralelo: 'EDC2', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A003', paralelo: 'ING37', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A004', paralelo: 'EDC7', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A005', paralelo: 'ING15', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A006', paralelo: 'EDC3', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A102', paralelo: 'EDC4', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A103', paralelo: 'ING32', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A104', paralelo: 'ING33', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A105', paralelo: 'EDC5', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A106', paralelo: 'EDC1', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A107', paralelo: 'EDC6', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A108', paralelo: 'ING23', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A110', paralelo: 'ING24', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A111', paralelo: 'ING34', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A112', paralelo: 'ING31', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A201', paralelo: 'ING39 (Apellidos A-L)', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A202', paralelo: 'ING39 (Apellidos M-Z)', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A203', paralelo: 'ING27', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A204', paralelo: 'ING28', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A205', paralelo: 'ING26', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A206', paralelo: 'ING29', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A207', paralelo: 'ING30', franja: 'FRANJA 2', time_end: '12:30' },
-        { aula: 'A208', paralelo: 'ING25', franja: 'FRANJA 2', time_end: '12:30' },
-    ];
+    function startCountdown() {
+        const now = new Date();
+        const targetDate = new Date();
+        targetDate.setHours(11, 0, 0, 0); // Set target to 11:00 AM
 
-    // Show the modal when the page loads
-    paraleloModal.classList.add('show');
-    console.log('Clase "show" añadida al modal.');
-
-    startButton.addEventListener('click', () => {
-        const inputParalelo = paraleloInput.value.trim();
-        infoTextElement.style.display = 'none';
-        errorMessageElement.style.display = 'none';
-
-        if (!inputParalelo) {
-            errorMessageElement.textContent = 'Por favor, ingresa un paralelo.';
-            errorMessageElement.style.display = 'block';
-            return;
+        // If the target time has already passed today, set it for tomorrow
+        if (targetDate.getTime() < now.getTime()) {
+            targetDate.setDate(targetDate.getDate() + 1);
         }
 
-        const matchedFranja = franjasData.find(item => item.paralelo.toLowerCase() === inputParalelo.toLowerCase());
+        clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+            const currentTime = new Date().getTime();
+            const timeLeft = targetDate.getTime() - currentTime;
 
-        if (matchedFranja) {
-            paraleloModal.classList.remove('show'); // Hide the modal on success
-
-            const now = new Date();
-            const [hours, minutes] = matchedFranja.time_end.split(':').map(Number);
-            const targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
-
-            // If the target time has already passed today, set it for tomorrow
-            if (targetDate.getTime() < now.getTime()) {
-                targetDate.setDate(targetDate.getDate() + 1);
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                clockElement.textContent = '00:00:00';
+                countdownTextElement.textContent = '¡Tiempo terminado!';
+                return;
             }
 
-            infoTextElement.textContent = `Aula: ${matchedFranja.aula}, Franja: ${matchedFranja.franja}`;
-            infoTextElement.style.display = 'block';
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-            clearInterval(countdownInterval);
-            countdownInterval = setInterval(() => {
-                const currentTime = new Date().getTime();
-                const timeLeft = targetDate.getTime() - currentTime;
+            // Format for display (add days if > 0)
+            let timeString = '';
+            if (days > 0) {
+                timeString += `${days.toString().padStart(2, '0')}:`;
+            }
+            timeString += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-                if (timeLeft <= 0) {
-                    clearInterval(countdownInterval);
-                    clockElement.textContent = '00:00:00';
-                    countdownTextElement.textContent = '¡Tiempo terminado!';
-                    return;
-                }
-
-                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-                // Format for display (add days if > 0)
-                let timeString = '';
-                if (days > 0) {
-                    timeString += `${days.toString().padStart(2, '0')}:`;
-                }
-                timeString += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-                clockElement.textContent = timeString;
-            }, 1000);
-        } else {
-            errorMessageElement.textContent = 'Paralelo no encontrado. Por favor, verifica tu entrada.';
-            errorMessageElement.style.display = 'block';
-        }
-    });
-
-    // Initial display of the clock (before countdown starts)
-    function updateClock() {
-        const now = new Date();
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const seconds = now.getSeconds().toString().padStart(2, '0');
-        clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+            clockElement.textContent = timeString;
+        }, 1000);
     }
 
-    // Update current time display every second if no countdown is active
-    setInterval(updateClock, 1000);
-    updateClock(); // Call once immediately to avoid delay
+    startCountdown(); // Start the countdown immediately on page load
 });
